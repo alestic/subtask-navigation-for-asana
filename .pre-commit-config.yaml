@@ -1,0 +1,18 @@
+# [Created with AI: Claude Code with Opus 4.6]
+# Auto-fixes formatting + auto-bumps version before commit; install with: make install-hooks
+
+repos:
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.8.1
+    hooks:
+      - id: prettier
+        types_or: [markdown, css, javascript]
+
+  - repo: local
+    hooks:
+      - id: bump-version
+        name: auto-bump version
+        entry: bash scripts/bump-version.sh
+        language: system
+        pass_filenames: false
+        always_run: true
