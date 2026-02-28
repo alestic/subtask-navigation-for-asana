@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Auto-bump date-based version in manifest.json if unchanged from HEAD.
-# Called by pre-commit hook — modifies manifest.json so the commit fails
-# on first attempt; re-stage and commit again to proceed.
+# Run proactively via `make bump-version` before committing, or let the
+# pre-commit hook call it (which modifies manifest.json after staging,
+# requiring re-stage and re-commit).
 # [Created with AI: Claude Code with Opus 4.6]
 set -euo pipefail
 

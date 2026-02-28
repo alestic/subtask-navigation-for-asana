@@ -66,14 +66,18 @@
       ) {
         return stored;
       }
-    } catch {}
+    } catch (err) {
+      console.debug('Subtask Navigation for Asana: loadCache failed:', err);
+    }
     return { childrenOf: {}, lastVisited: {}, parentOf: {} };
   }
 
   function saveCache() {
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-    } catch {}
+    } catch (err) {
+      console.debug('Subtask Navigation for Asana: saveCache failed:', err);
+    }
   }
 
   function evictOldestIfNeeded() {
@@ -153,15 +157,8 @@
       parentGid = task.parent.gid;
       cache.parentOf[taskId] = parentGid;
 
-      siblings = await fetchJson(
-        `/api/1.0/tasks/${parentGid}/subtasks?opt_fields=name&limit=100`,
-      );
-      cache.childrenOf[parentGid] = { siblings, fetchedAt: Date.now() };
-      evictOldestIfNeeded();
-      siblings.forEach((s) => {
-        cache.parentOf[s.gid] = parentGid;
-      });
-
+      delete cache.childrenOf[parentGid];
+      siblings = await resolveChildren(parentGid);
       idx = siblings.findIndex((s) => s.gid === taskId);
     }
 
@@ -189,15 +186,17 @@
   function spaNavigate(targetTaskId) {
     const nav = getNavigationService();
     if (!nav) return false;
+    let routed = false;
     nav.requestChangeRoute(function (currentRoute) {
       if (!currentRoute.child?.task) return currentRoute;
+      routed = true;
       const newRoute = Object.assign({}, currentRoute);
       newRoute.child = Object.assign({}, currentRoute.child);
       newRoute.child.task = Object.assign({}, currentRoute.child.task);
       newRoute.child.task.id = targetTaskId;
       return newRoute;
     });
-    return true;
+    return routed;
   }
 
   // --- Navigation handlers ---
@@ -212,8 +211,12 @@
       return;
     }
     if (ctx.idx === -1) {
-      if (ctx.siblings.length === 100)
-        showToast('Too many siblings (>100)', true);
+      showToast(
+        ctx.siblings.length === 100
+          ? 'Too many siblings (100+)'
+          : 'Task not found in siblings',
+        true,
+      );
       return;
     }
 
@@ -228,10 +231,13 @@
     }
 
     const target = ctx.siblings[newIdx];
+    if (!spaNavigate(target.gid)) {
+      showToast('Navigation unavailable', true);
+      return;
+    }
     cache.lastVisited[ctx.parentGid] = { gid: target.gid, idx: newIdx };
     saveCache();
     showToast(`${newIdx + 1} / ${ctx.siblings.length}`, false);
-    spaNavigate(target.gid);
   }
 
   async function navigateToEdge(end) {
@@ -244,8 +250,12 @@
       return;
     }
     if (ctx.idx === -1) {
-      if (ctx.siblings.length === 100)
-        showToast('Too many siblings (>100)', true);
+      showToast(
+        ctx.siblings.length === 100
+          ? 'Too many siblings (100+)'
+          : 'Task not found in siblings',
+        true,
+      );
       return;
     }
 
@@ -260,10 +270,13 @@
     }
 
     const target = ctx.siblings[newIdx];
+    if (!spaNavigate(target.gid)) {
+      showToast('Navigation unavailable', true);
+      return;
+    }
     cache.lastVisited[ctx.parentGid] = { gid: target.gid, idx: newIdx };
     saveCache();
     showToast(`${newIdx + 1} / ${ctx.siblings.length}`, false);
-    spaNavigate(target.gid);
   }
 
   async function navigateToParent() {
@@ -277,10 +290,15 @@
     }
 
     // Remember current position before leaving
-    cache.lastVisited[ctx.parentGid] = { gid: taskId, idx: ctx.idx };
-    saveCache();
+    if (!spaNavigate(ctx.parentGid)) {
+      showToast('Navigation unavailable', true);
+      return;
+    }
+    if (ctx.idx !== -1) {
+      cache.lastVisited[ctx.parentGid] = { gid: taskId, idx: ctx.idx };
+      saveCache();
+    }
     showToast('\u2190 Parent', false);
-    spaNavigate(ctx.parentGid);
   }
 
   async function navigateToSubtask() {
@@ -306,10 +324,13 @@
     }
 
     const target = subtasks[targetIdx];
+    if (!spaNavigate(target.gid)) {
+      showToast('Navigation unavailable', true);
+      return;
+    }
     cache.lastVisited[taskId] = { gid: target.gid, idx: targetIdx };
     saveCache();
     showToast(`\u2192 ${targetIdx + 1} / ${subtasks.length}`, false);
-    spaNavigate(target.gid);
   }
 
   // --- Main dispatcher ---
@@ -323,6 +344,11 @@
       await handler();
     } catch (err) {
       console.error('Subtask Navigation for Asana:', err);
+      if (err.message === 'API 404') {
+        showToast('Not a task', true);
+      } else {
+        showToast('Error — see console', true);
+      }
     } finally {
       navigating = false;
     }

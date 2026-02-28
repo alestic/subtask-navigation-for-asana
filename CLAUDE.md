@@ -7,7 +7,8 @@ navigate the task tree (siblings, parent, subtasks).
 
 ## Prerequisites
 
-Requires Node.js (for Prettier formatting and manifest validation via `npx`/`node`).
+Requires Node.js (for Prettier formatting and manifest validation via `npx`/`node`)
+and [uv](https://docs.astral.sh/uv/) (for pre-commit hook installation via `uvx`).
 
 ## How It Works
 
@@ -23,9 +24,15 @@ global scope.
 ## Project Structure
 
 ```
-manifest.json    Chrome extension manifest (MV3)
-content.js       Keyboard listener, API calls, cache, SPA navigation
-content.css      Toast notification styling
+manifest.json              Chrome extension manifest (MV3)
+content.js                 Keyboard listener, API calls, cache, SPA navigation
+content.css                Toast notification styling
+Makefile                   Build, lint, format, and packaging targets
+scripts/bump-version.sh   Auto-bump date-based version
+.github/workflows/        CI (lint + validate)
+.prettierrc                Prettier configuration
+.prettierignore            Prettier ignore rules
+.pre-commit-config.yaml   Pre-commit hook configuration
 ```
 
 ## Development

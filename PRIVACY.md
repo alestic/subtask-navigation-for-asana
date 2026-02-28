@@ -39,8 +39,8 @@ positions) in the browser tab's `sessionStorage`. This data:
 
 This extension requests no special browser permissions. The `content_scripts` entry
 in the manifest limits the script to `https://app.asana.com/*` only. The content
-script runs in the `MAIN` world to access keyboard events and Asana's client-side
-navigation.
+script runs in the `MAIN` world to access Asana's internal React router for
+seamless client-side navigation.
 
 ### Third-Party Services
 

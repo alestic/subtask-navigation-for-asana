@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Subtask Navigation for Asana",
   "description": "Navigate the Asana task tree with Shift+Alt+Arrow hotkeys.",
-  "version": "2026.2.28.1029",
+  "version": "2026.2.28.1306",
   "content_scripts": [
     {
       "matches": ["https://app.asana.com/*"],
