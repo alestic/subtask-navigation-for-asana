@@ -186,17 +186,24 @@
   function spaNavigate(targetTaskId) {
     const nav = getNavigationService();
     if (!nav) return false;
-    let routed = false;
     nav.requestChangeRoute(function (currentRoute) {
-      if (!currentRoute.child?.task) return currentRoute;
-      routed = true;
-      const newRoute = Object.assign({}, currentRoute);
-      newRoute.child = Object.assign({}, currentRoute.child);
-      newRoute.child.task = Object.assign({}, currentRoute.child.task);
-      newRoute.child.task.id = targetTaskId;
-      return newRoute;
+      if (currentRoute.child?.task) {
+        const newRoute = Object.assign({}, currentRoute);
+        newRoute.child = Object.assign({}, currentRoute.child);
+        newRoute.child.task = Object.assign({}, currentRoute.child.task);
+        newRoute.child.task.id = targetTaskId;
+        return newRoute;
+      }
+      if (currentRoute.modal?.task) {
+        const newRoute = Object.assign({}, currentRoute);
+        newRoute.modal = Object.assign({}, currentRoute.modal);
+        newRoute.modal.task = Object.assign({}, currentRoute.modal.task);
+        newRoute.modal.task.id = targetTaskId;
+        return newRoute;
+      }
+      return currentRoute;
     });
-    return routed;
+    return true;
   }
 
   // --- Navigation handlers ---
@@ -231,13 +238,10 @@
     }
 
     const target = ctx.siblings[newIdx];
-    if (!spaNavigate(target.gid)) {
-      showToast('Navigation unavailable', true);
-      return;
-    }
     cache.lastVisited[ctx.parentGid] = { gid: target.gid, idx: newIdx };
     saveCache();
     showToast(`${newIdx + 1} / ${ctx.siblings.length}`, false);
+    spaNavigate(target.gid);
   }
 
   async function navigateToEdge(end) {
@@ -270,13 +274,10 @@
     }
 
     const target = ctx.siblings[newIdx];
-    if (!spaNavigate(target.gid)) {
-      showToast('Navigation unavailable', true);
-      return;
-    }
     cache.lastVisited[ctx.parentGid] = { gid: target.gid, idx: newIdx };
     saveCache();
     showToast(`${newIdx + 1} / ${ctx.siblings.length}`, false);
+    spaNavigate(target.gid);
   }
 
   async function navigateToParent() {
@@ -290,15 +291,12 @@
     }
 
     // Remember current position before leaving
-    if (!spaNavigate(ctx.parentGid)) {
-      showToast('Navigation unavailable', true);
-      return;
-    }
     if (ctx.idx !== -1) {
       cache.lastVisited[ctx.parentGid] = { gid: taskId, idx: ctx.idx };
       saveCache();
     }
     showToast('\u2190 Parent', false);
+    spaNavigate(ctx.parentGid);
   }
 
   async function navigateToSubtask() {
@@ -324,13 +322,10 @@
     }
 
     const target = subtasks[targetIdx];
-    if (!spaNavigate(target.gid)) {
-      showToast('Navigation unavailable', true);
-      return;
-    }
     cache.lastVisited[taskId] = { gid: target.gid, idx: targetIdx };
     saveCache();
     showToast(`\u2192 ${targetIdx + 1} / ${subtasks.length}`, false);
+    spaNavigate(target.gid);
   }
 
   // --- Main dispatcher ---

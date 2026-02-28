@@ -52,7 +52,7 @@ validate: ## Validate manifest.json structure
 .PHONY: package
 package: validate ## Create .zip for Chrome Web Store upload
 	@rm -f $(NAME).zip
-	zip -r $(NAME).zip manifest.json content.js content.css LICENSE PRIVACY.md
+	zip -r $(NAME).zip manifest.json content.js content.css icons/ LICENSE PRIVACY.md
 	@echo "Created $(NAME).zip"
 
 .PHONY: bump-version
