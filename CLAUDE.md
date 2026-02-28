@@ -17,9 +17,9 @@ extracts the task ID from the URL, calls Asana's REST API (using your
 existing session cookies) to find the parent and sibling subtasks, then
 navigates using Asana's internal React router for seamless SPA transitions.
 
-The content script runs in the MAIN world (required for keyboard events on
-app.asana.com) and is wrapped in an IIFE to avoid leaking into Asana's
-global scope.
+The content script runs in the MAIN world (required to access React fiber
+properties on DOM elements for SPA navigation) and is wrapped in an IIFE
+to avoid leaking into Asana's global scope.
 
 ## Project Structure
 
@@ -75,8 +75,8 @@ project root). JavaScript uses single quotes.
 
 ## Key Conventions
 
-- **MAIN world** — content script must run in `"world": "MAIN"` for keyboard
-  events to work; the IIFE wrapper is load-bearing
+- **MAIN world** — content script must run in `"world": "MAIN"` to access
+  React fiber properties for SPA navigation; the IIFE wrapper is load-bearing
 - **Date-based versioning** (`YYYY.M.D.HMM` America/Los_Angeles) in
   `manifest.json` — Chrome extension versions must be 1-4 dot-separated
   integers (0-65535, no leading zeros on non-zero values); auto-bumped
