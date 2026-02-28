@@ -4,32 +4,22 @@
 
 # Subtask Navigation for Asana
 
-[![Tests](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml/badge.svg)](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml)
+[![Checks](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml/badge.svg)](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 A Chrome extension that adds **Shift+Alt+Arrow** hotkeys to navigate the
 task tree on app.asana.com — move between sibling subtasks, jump to the
-parent, or return to the last-visited child subtask.
+parent, or return to the last-visited (or first) child subtask.
 
 ## Why?
 
 Asana has no built-in keyboard shortcuts for navigating between subtasks.
-If you work with deeply nested task hierarchies, you're stuck clicking
-breadcrumbs and subtask links to move around the tree. This extension
-adds six hotkeys that let you navigate the full hierarchy without leaving
-the keyboard.
+If you work with deeply nested task hierarchies with many subtasks,
+moving around the tree means lots of clicking, scrolling, and more
+clicking.
 
-## How It Works
-
-When you press Shift+Alt+Arrow while viewing a task:
-
-1. Extracts the current task ID from the URL
-2. Calls Asana's REST API (using your existing session cookies) to find
-   the parent task and its subtasks
-3. Navigates using Asana's internal React router for seamless SPA
-   transitions — no page reload
-4. Caches sibling lists (60-second TTL) and remembers your position at
-   each level so Left then Right is always a round-trip
+This extension adds six hotkeys that let you navigate the full hierarchy
+without leaving the keyboard.
 
 ## Hotkeys
 
@@ -42,8 +32,24 @@ When you press Shift+Alt+Arrow while viewing a task:
 | **Shift+Alt+Home**  | First sibling                         |
 | **Shift+Alt+End**   | Last sibling                          |
 
-A toast notification shows your position ("3 / 5") or boundary ("First
-task · 1 / 5") after each navigation.
+## Features
+
+- Position indicator toast ("3 / 5") after each navigation
+- Remembers last-visited subtask at each level (Left then Right is a
+  round-trip)
+- Caches sibling lists in the browser for fast repeated navigation
+- Per-tab navigation state (independent positions in each Chrome tab)
+- Seamless SPA navigation (no page reload)
+- Manifest V3
+- Open source (Apache 2.0)
+
+## How It Works
+
+When you press a navigation hotkey, the extension reads the current task
+ID from the URL, calls Asana's REST API (within your browser using your
+existing session cookies) to look up the parent task and its subtasks,
+then navigates using Asana's internal client-side router for a seamless
+transition.
 
 ## Install
 
@@ -59,7 +65,7 @@ The extension activates automatically on Asana pages.
 
 - SPA navigation relies on Asana's internal React component structure
   (may break if Asana changes internals)
-- Maximum 100 siblings per parent task (Asana API limit)
+- Maximum 100 siblings per parent task (Asana API page limit)
 - Hotkeys are disabled when focus is in a text input or editable field
 
 ## Privacy
