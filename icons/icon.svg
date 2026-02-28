@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- [Created with AI: Claude Code with Opus 4.6] -->
+
+  <!-- Background: rounded square in Google Meet teal -->
+  <rect x="0" y="0" width="128" height="128" rx="24" ry="24" fill="#00897B"/>
+
+  <!-- Parent node -->
+  <circle cx="28" cy="24" r="8" fill="none" stroke="white" stroke-width="4"/>
+
+  <!-- Tree structure: white lines -->
+  <g stroke="white" stroke-width="5" stroke-linecap="round" fill="none">
+    <!-- Straight vertical trunk from parent through all children -->
+    <line x1="28" y1="32" x2="28" y2="104"/>
+    <!-- Branches -->
+    <line x1="28" y1="44" x2="54" y2="44"/>
+    <line x1="28" y1="74" x2="54" y2="74"/>
+    <line x1="28" y1="104" x2="54" y2="104"/>
+  </g>
+
+  <!-- Sibling nodes: open circles -->
+  <circle cx="64" cy="44" r="8" fill="none" stroke="white" stroke-width="4"/>
+  <circle cx="64" cy="104" r="8" fill="none" stroke="white" stroke-width="4"/>
+
+  <!-- Current node: filled white -->
+  <circle cx="64" cy="74" r="9" fill="white" stroke="white" stroke-width="4"/>
+
+  <!-- Up arrow -->
+  <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <line x1="100" y1="62" x2="100" y2="40"/>
+    <polyline points="91,49 100,40 109,49"/>
+  </g>
+
+  <!-- Down arrow -->
+  <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <line x1="100" y1="86" x2="100" y2="108"/>
+    <polyline points="91,99 100,108 109,99"/>
+  </g>
+</svg>

@@ -1,5 +1,7 @@
 <!-- [Created with AI: Claude Code with Opus 4.6] -->
 
+<img align=right src="./icons/icon-128.png" />
+
 # Subtask Navigation for Asana
 
 [![Tests](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml/badge.svg)](https://github.com/alestic/subtask-navigation-for-asana/actions/workflows/test.yml)
