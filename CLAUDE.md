@@ -41,11 +41,13 @@ All commands go through the Makefile:
 
 ```
 make help           Show all targets
-make lint           Run prettier --check on Markdown, CSS, and JavaScript
-make format         Run prettier --write on Markdown, CSS, and JavaScript
+make install-hooks  Install pre-commit git hooks
+make format         Auto-format Markdown, CSS, and JavaScript with Prettier
+make lint           Check formatting with Prettier
 make validate       Validate manifest.json structure
 make bump-version   Bump version to current timestamp
 make package        Create .zip for Chrome Web Store upload
+make release        Tag version, create GitHub release with .zip
 make clean          Remove build artifacts
 ```
 

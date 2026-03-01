@@ -53,11 +53,14 @@ transition.
 
 ## Install
 
-1. Clone or download this repository
-2. Open `chrome://extensions` in Chrome
-3. Enable **Developer mode** (toggle in the top right)
-4. Click **Load unpacked**
-5. Select the repository directory
+1. Download the latest `.zip` from
+   [Releases](https://github.com/alestic/subtask-navigation-for-asana/releases)
+   (or clone this repository)
+2. Unzip to a local directory
+3. Open `chrome://extensions` in Chrome
+4. Enable **Developer mode** (toggle in the top right)
+5. Click **Load unpacked**
+6. Select the unzipped directory
 
 The extension activates automatically on Asana pages.
 
@@ -81,11 +84,13 @@ validation) and [uv](https://docs.astral.sh/uv/) (for pre-commit hooks).
 
 ```
 make help           # show all targets
-make lint           # check formatting (Markdown, CSS, JavaScript)
-make format         # auto-format all files
-make validate       # validate manifest.json
-make package        # create .zip for Chrome Web Store upload
 make install-hooks  # install pre-commit git hooks (requires uv)
+make format         # auto-format all files
+make lint           # check formatting
+make validate       # validate manifest.json
+make bump-version   # bump version to current timestamp
+make package        # create .zip for Chrome Web Store upload
+make release        # tag version, create GitHub release with .zip
 ```
 
 ## Attribution

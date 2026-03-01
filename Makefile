@@ -2,40 +2,23 @@
 # [Created with AI: Claude Code with Opus 4.6]
 
 NAME := subtask-navigation-for-asana
+FILES := '**/*.{md,css,js}'
 
 .PHONY: help
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: lint
-lint: lint-md lint-css lint-js ## Run all linters and format checkers
-
-.PHONY: lint-md
-lint-md: ## Check Markdown formatting with Prettier
-	npx --yes prettier --check '**/*.md'
-
-.PHONY: lint-css
-lint-css: ## Check CSS formatting with Prettier
-	npx --yes prettier --check '**/*.css'
-
-.PHONY: lint-js
-lint-js: ## Check JavaScript formatting with Prettier
-	npx --yes prettier --check '**/*.js'
+.PHONY: install-hooks
+install-hooks: ## Install pre-commit git hooks
+	uvx pre-commit install
 
 .PHONY: format
-format: format-md format-css format-js ## Run all formatters
+format: ## Auto-format Markdown, CSS, and JavaScript with Prettier
+	npx --yes prettier --write $(FILES)
 
-.PHONY: format-md
-format-md: ## Format Markdown files with Prettier
-	npx --yes prettier --write '**/*.md'
-
-.PHONY: format-css
-format-css: ## Format CSS files with Prettier
-	npx --yes prettier --write '**/*.css'
-
-.PHONY: format-js
-format-js: ## Format JavaScript files with Prettier
-	npx --yes prettier --write '**/*.js'
+.PHONY: lint
+lint: ## Check formatting with Prettier
+	npx --yes prettier --check $(FILES)
 
 .PHONY: validate
 validate: ## Validate manifest.json structure
@@ -49,20 +32,23 @@ validate: ## Validate manifest.json structure
 	  console.log('manifest.json OK (v' + m.version + ')'); \
 	"
 
+.PHONY: bump-version
+bump-version: ## Bump version to current America/Los_Angeles timestamp
+	bash scripts/bump-version.sh
+
 .PHONY: package
 package: validate ## Create .zip for Chrome Web Store upload
 	@rm -f $(NAME).zip
 	zip -r $(NAME).zip manifest.json content.js content.css icons/ LICENSE PRIVACY.md
 	@echo "Created $(NAME).zip"
 
-.PHONY: bump-version
-bump-version: ## Bump version to current America/Los_Angeles timestamp
-	bash scripts/bump-version.sh
+.PHONY: release
+release: package ## Tag, create GitHub release, and upload .zip
+	$(eval VERSION := $(shell node -p "require('./manifest.json').version"))
+	git tag -a v$(VERSION) -m "Release v$(VERSION)"
+	git push origin v$(VERSION)
+	gh release create v$(VERSION) $(NAME).zip --title "v$(VERSION)" --generate-notes
 
 .PHONY: clean
 clean: ## Remove build artifacts
 	rm -f $(NAME).zip
-
-.PHONY: install-hooks
-install-hooks: ## Install pre-commit git hooks
-	uvx pre-commit install
